@@ -477,7 +477,11 @@ input, textarea { font: inherit; color: inherit; }
   .view-main { padding: 16px 14px 100px !important; gap: 14px !important; }
 
   /* ── Dashboard ───────────────────────────────────────── */
-  .dash-score-grid { grid-template-columns: 1fr 1fr !important; }
+  .dash-score-grid    { grid-template-columns: 1fr 1fr !important; }
+  .dash-habits-row   { grid-template-columns: 1fr !important; }
+  .dash-bottom-grid  { grid-template-columns: 1fr !important; }
+  .dsa-progress-inner { flex-direction: column !important; }
+  .dsa-progress-inner > div:first-child { margin-bottom: 12px; }
 
   /* ── Habits ──────────────────────────────────────────── */
   .habits-today-grid    { grid-template-columns: 1fr !important; }

@@ -119,7 +119,7 @@ function DashboardView({ state, dispatch, compact = false }) {
       </div>
 
       {/* row: habits | upcoming */}
-      <div style={{
+      <div className="dash-habits-row" style={{
         display: 'grid',
         gridTemplateColumns: compact ? '1fr' : '1.3fr 1fr',
         gap: 12,
@@ -180,7 +180,7 @@ function DashboardView({ state, dispatch, compact = false }) {
       <DSAProgressCard state={state} dispatch={dispatch} compact={compact}/>
 
       {/* bottom row: tasks | challenges | quote */}
-      <div style={{
+      <div className="dash-bottom-grid" style={{
         display: 'grid',
         gridTemplateColumns: compact ? '1fr' : '1.2fr 1fr 1fr',
         gap: 12,
@@ -271,9 +271,9 @@ function DSAProgressCard({ state, dispatch, compact }) {
           </button>
         }
       />
-      <div style={{ display: compact ? 'block' : 'flex', gap: 24, marginTop: 16, alignItems: 'flex-start' }}>
+      <div className="dsa-progress-inner" style={{ display: 'flex', gap: 24, marginTop: 16, alignItems: 'flex-start' }}>
         {/* left: big ring + pct */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0, marginBottom: compact ? 16 : 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexShrink: 0 }}>
           <Donut value={pct / 100} size={72} stroke={8} color="var(--accent)"
             label={<span className="num" style={{ fontSize: 20 }}>{pct}<span style={{ fontSize: 11 }}>%</span></span>}/>
           <div>
@@ -286,7 +286,7 @@ function DSAProgressCard({ state, dispatch, compact }) {
         </div>
 
         {/* right: category bars */}
-        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: compact ? '1fr' : '1fr 1fr', gap: '6px 24px' }}>
+        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
           {cats.map(c => (
             <div key={c.id}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, marginBottom: 3 }}>
