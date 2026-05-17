@@ -142,15 +142,30 @@ function DashboardView({ state, dispatch, compact = false }) {
         <div className="card" style={{ padding: '18px 20px' }}>
           <CardHead title="Up next" hint="Today's agenda"/>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 12 }}>
-            {(seed.events||[]).filter(e => e.date === today).map(e => (
-              <AgendaRow key={e.id} ev={e}/>
-            ))}
-            {(seed.events||[]).filter(e => e.date === today).length === 0 && <Empty title="Clear day" hint="No scheduled events"/>}
-            <div className="hr" style={{ margin: '10px 0' }}/>
-            <div className="h-eyebrow" style={{ marginBottom: 6 }}>Tomorrow</div>
-            {(seed.events||[]).filter(e => e.date > today).slice(0, 2).map(e => (
-              <AgendaRow key={e.id} ev={e} muted/>
-            ))}
+            {(() => {
+              const allEvents = state.events || seed.events || [];
+              const todayEvts = allEvents
+                .filter(e => e.date === today)
+                .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+              const upcoming = allEvents
+                .filter(e => e.date > today)
+                .sort((a, b) => a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''));
+              const nextDate = upcoming[0]?.date;
+              const tomorrowIso = (() => { const d = new Date(today); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); })();
+              const nextLabel = !nextDate ? 'Upcoming'
+                : nextDate === tomorrowIso ? 'Tomorrow'
+                : new Date(nextDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+              return (
+                <>
+                  {todayEvts.map(e => <AgendaRow key={e.id} ev={e}/>)}
+                  {todayEvts.length === 0 && <Empty title="Clear day" hint="No scheduled events"/>}
+                  <div className="hr" style={{ margin: '10px 0' }}/>
+                  <div className="h-eyebrow" style={{ marginBottom: 6 }}>{nextLabel}</div>
+                  {upcoming.slice(0, 3).map(e => <AgendaRow key={e.id} ev={e} muted/>)}
+                  {upcoming.length === 0 && <span className="muted" style={{ fontSize: 12 }}>Nothing upcoming</span>}
+                </>
+              );
+            })()}
           </div>
         </div>
       </div>
