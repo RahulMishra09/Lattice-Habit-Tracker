@@ -4,18 +4,21 @@ const { useState: useState1, useEffect: useEffect1, useMemo: useMemo1, useRef: u
 // helpers ----------------------------------------------------------
 const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 const greetingFor = (h) => h < 5 ? 'Working late' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : h < 21 ? 'Good evening' : 'Wind down';
-const getWeekNum1 = (date) => {
-  const d = new Date(date);
-  const oneJan = new Date(d.getFullYear(), 0, 1);
-  return Math.ceil(((d - oneJan) / 86400000 + oneJan.getDay() + 1) / 7);
+// ISO 8601 week number: week containing the first Thursday of the year
+const getWeekNum1 = (isoDate) => {
+  const d = new Date(isoDate + 'T12:00:00');
+  d.setDate(d.getDate() + 4 - (d.getDay() || 7)); // shift to Thursday of current week
+  const yearStart = new Date(d.getFullYear(), 0, 1);
+  return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
 };
 
 // ── DASHBOARD ─────────────────────────────────────────────────────
 function DashboardView({ state, dispatch, compact = false }) {
   const seed = window.LATTICE_SEED;
   const today = seed.TODAY;
+  const realToday = new Date().toISOString().slice(0, 10);
   const hour = new Date().getHours();
-  const wk = getWeekNum1(today);
+  const wk = getWeekNum1(realToday);
   const [consistencyScope, setConsistencyScope] = useState1('all');
 
   const habitsToday = state.habits.map(h => ({
@@ -85,7 +88,7 @@ function DashboardView({ state, dispatch, compact = false }) {
       {/* greeting */}
       <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
         <div>
-          <div className="h-eyebrow" style={{ marginBottom: 6 }}>{fmtDate(today)} · Week {wk}</div>
+          <div className="h-eyebrow" style={{ marginBottom: 6 }}>{fmtDate(realToday)} · Week {wk}</div>
           <h1 className={compact ? 'h-title' : 'h-display'} style={{ margin: 0 }}>
             {greetingFor(hour)}, Rahul.
           </h1>
