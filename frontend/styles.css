@@ -472,4 +472,15 @@ input, textarea { font: inherit; color: inherit; }
 
   /* Tighten display heading sizes on mobile */
   .h-display { font-size: 26px; }
+
+  /* ── Timer view ─────────────────────────────────────── */
+  .timer-view  { padding: 16px 12px 100px !important; gap: 14px !important; }
+  .timer-card  { padding: 24px 14px !important; }
+  .timer-clock { font-size: 80px !important; }
+  .timer-stats { grid-template-columns: 1fr 1fr !important; }
+  .timer-settings { padding: 14px 14px !important; }
+  .timer-countdown-row { flex-wrap: wrap !important; gap: 6px !important; }
+  .timer-controls { gap: 6px !important; }
+  .timer-controls .btn { height: 46px !important; flex: 1; min-width: 44px; }
+  .timer-controls .btn-primary { flex: 2; }
 }

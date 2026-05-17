@@ -1359,7 +1359,7 @@ function TimerView({ state, dispatch, compact = false }) {
   const accentCol  = mode === 'pomodoro' ? (phase === 'focus' ? 'var(--accent)' : 'var(--warn)') : 'var(--info)';
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 16 : '24px 32px 40px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+    <div className="fade-up timer-view" style={{ padding: compact ? 16 : '24px 32px 40px', display: 'flex', flexDirection: 'column', gap: 18 }}>
       <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
         <div>
           <div className="h-eyebrow">Focus</div>
@@ -1385,7 +1385,7 @@ function TimerView({ state, dispatch, compact = false }) {
       </div>
 
       {/* Big timer card */}
-      <div className="card" style={{
+      <div className="card timer-card" style={{
         padding: compact ? '28px 16px' : '48px 32px',
         background: `linear-gradient(160deg, var(--surface), color-mix(in oklch, ${accentCol}, var(--surface) 92%))`,
         textAlign: 'center', position: 'relative', overflow: 'hidden',
@@ -1399,7 +1399,7 @@ function TimerView({ state, dispatch, compact = false }) {
         </div>
 
         {/* Time display */}
-        <div style={{
+        <div className="timer-clock" style={{
           fontFamily: 'var(--font-serif)',
           fontSize: compact ? 88 : 144,
           fontWeight: 300, letterSpacing: '-0.04em', lineHeight: 1,
@@ -1418,7 +1418,7 @@ function TimerView({ state, dispatch, compact = false }) {
         )}
 
         {/* Controls */}
-        <div style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 24, flexWrap: 'wrap' }}>
+        <div className="timer-controls" style={{ display: 'flex', gap: 8, justifyContent: 'center', marginTop: 24, flexWrap: 'wrap' }}>
           <button className="btn btn-primary" style={{ height: 42, padding: '0 24px', fontSize: 14 }}
             onClick={() => set({ running: !running })}>
             <Icon name={running ? 'pause' : 'play'} size={14}/>
@@ -1446,7 +1446,7 @@ function TimerView({ state, dispatch, compact = false }) {
 
         {/* Pomodoro settings panel */}
         {mode === 'pomodoro' && showSettings && !running && (
-          <div style={{
+          <div className="timer-settings" style={{
             marginTop: 20, padding: '18px 24px', borderRadius: 12,
             background: 'var(--bg-soft)', border: '1px solid var(--line-soft)',
             display: 'flex', flexDirection: 'column', gap: 16, textAlign: 'left',
@@ -1553,7 +1553,7 @@ function TimerView({ state, dispatch, compact = false }) {
 
         {/* Countdown custom input */}
         {mode === 'countdown' && !running && (
-          <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
+          <div className="timer-countdown-row" style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'center' }}>
             <span className="muted" style={{ fontSize: 12 }}>Duration (min):</span>
             {[5, 10, 15, 20, 30, 45, 60].map(min => (
               <button key={min} className="btn" style={{ height: 28, padding: '0 8px', fontSize: 11,
@@ -1567,7 +1567,7 @@ function TimerView({ state, dispatch, compact = false }) {
       </div>
 
       {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: compact ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 10 }}>
+      <div className="timer-stats" style={{ display: 'grid', gridTemplateColumns: compact ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 10 }}>
         <Metric label="Sessions today" value={last7Sessions[6]} sub="completed" series={last7Sessions}/>
         <Metric label="Focus minutes"  value={`${last7Sessions[6] * focusDuration}m`} sub="today" series={last7Minutes}/>
         <Metric label="Stopwatch"      value={fmtTime(stopwatch)} sub="elapsed" series={[]}/>
