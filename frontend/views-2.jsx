@@ -1323,7 +1323,11 @@ function TimerView({ state, dispatch, compact = false }) {
   const seed = window.LATTICE_SEED;
   const t = state.timer || {};
   const { mode = 'pomodoro', phase = 'focus', running = false, secondsLeft = 1500,
-          stopwatch = 0, countdown = 600, subject = 'DSA', completedToday = 0 } = t;
+          stopwatch = 0, countdown = 600, subject = 'DSA', completedToday = 0,
+          focusDuration = 25, breakDuration = 5 } = t;
+  const [showSettings, setShowSettings] = React.useState(false);
+  const [draftFocus, setDraftFocus] = React.useState(focusDuration);
+  const [draftBreak, setDraftBreak] = React.useState(breakDuration);
 
   const set = (payload) => dispatch({ type: 'TIMER_SET', payload });
 
@@ -1338,7 +1342,7 @@ function TimerView({ state, dispatch, compact = false }) {
   const last7Sessions = last7Dates.map(date =>
     allSessions.filter(s => s.completed && s.date === date).length
   );
-  const last7Minutes = last7Sessions.map(n => n * 25);
+  const last7Minutes = last7Sessions.map(n => n * focusDuration);
 
   // All subject options: static list + any added study subjects
   const subjectOptions = TIMER_SUBJECTS.concat(
@@ -1351,7 +1355,7 @@ function TimerView({ state, dispatch, compact = false }) {
   };
 
   const displaySec = mode === 'pomodoro' ? secondsLeft : mode === 'stopwatch' ? stopwatch : countdown;
-  const progress   = mode === 'pomodoro' ? 1 - secondsLeft / ((phase === 'focus' ? 25 : 5) * 60) : 0;
+  const progress   = mode === 'pomodoro' ? 1 - secondsLeft / ((phase === 'focus' ? focusDuration : breakDuration) * 60) : 0;
   const accentCol  = mode === 'pomodoro' ? (phase === 'focus' ? 'var(--accent)' : 'var(--warn)') : 'var(--info)';
 
   return (
@@ -1421,18 +1425,111 @@ function TimerView({ state, dispatch, compact = false }) {
             {running ? 'Pause' : mode === 'stopwatch' && stopwatch > 0 ? 'Resume' : 'Start'}
           </button>
           <button className="btn" style={{ height: 42, padding: '0 14px' }} onClick={() => {
-            if (mode === 'pomodoro')   set({ running: false, secondsLeft: (phase === 'focus' ? 25 : 5) * 60 });
+            if (mode === 'pomodoro')   set({ running: false, secondsLeft: (phase === 'focus' ? focusDuration : breakDuration) * 60 });
             else if (mode === 'stopwatch') set({ running: false, stopwatch: 0 });
             else                       set({ running: false, countdown: 10 * 60 });
           }}><Icon name="reset" size={14}/></button>
           {mode === 'pomodoro' && (
             <button className="btn" style={{ height: 42, padding: '0 14px' }} onClick={() => {
               const next = phase === 'focus' ? 'break' : 'focus';
-              set({ phase: next, secondsLeft: (next === 'focus' ? 25 : 5) * 60,
+              set({ phase: next, secondsLeft: (next === 'focus' ? focusDuration : breakDuration) * 60,
                     completedToday: phase === 'focus' ? completedToday + 1 : completedToday });
             }}><Icon name="next" size={14}/></button>
           )}
+          {mode === 'pomodoro' && !running && (
+            <button className="btn" style={{ height: 42, padding: '0 14px' }}
+              title="Customize timer" onClick={() => { setDraftFocus(focusDuration); setDraftBreak(breakDuration); setShowSettings(s => !s); }}>
+              <Icon name="sliders" size={14}/>
+            </button>
+          )}
         </div>
+
+        {/* Pomodoro settings panel */}
+        {mode === 'pomodoro' && showSettings && !running && (
+          <div style={{
+            marginTop: 20, padding: '18px 24px', borderRadius: 12,
+            background: 'var(--bg-soft)', border: '1px solid var(--line-soft)',
+            display: 'flex', flexDirection: 'column', gap: 16, textAlign: 'left',
+          }}>
+            <div className="muted" style={{ fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', marginBottom: 2 }}>
+              Customize Timer
+            </div>
+
+            {/* Focus duration */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: 'var(--accent)' }}>
+                Focus Duration — {draftFocus} min
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {[10, 15, 20, 25, 30, 45, 50, 60, 90].map(m => (
+                  <button key={m} className="btn" style={{
+                    height: 30, padding: '0 12px', fontSize: 12,
+                    background: draftFocus === m ? 'var(--accent)' : undefined,
+                    color: draftFocus === m ? '#fff' : undefined,
+                    borderColor: draftFocus === m ? 'var(--accent)' : undefined,
+                  }} onClick={() => setDraftFocus(m)}>{m}m</button>
+                ))}
+                <input
+                  type="number" min={1} max={180} value={draftFocus}
+                  onChange={e => setDraftFocus(Math.max(1, Math.min(180, +e.target.value || 1)))}
+                  style={{
+                    width: 64, height: 30, padding: '0 8px', borderRadius: 8, fontSize: 12,
+                    border: '1.5px solid var(--line-soft)', background: 'var(--surface)',
+                    color: 'var(--ink)', textAlign: 'center',
+                  }}
+                  title="Custom minutes"
+                />
+              </div>
+            </div>
+
+            {/* Break duration */}
+            <div>
+              <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8, color: 'var(--warn)' }}>
+                Break Duration — {draftBreak} min
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {[3, 5, 10, 15, 20, 30].map(m => (
+                  <button key={m} className="btn" style={{
+                    height: 30, padding: '0 12px', fontSize: 12,
+                    background: draftBreak === m ? 'var(--warn)' : undefined,
+                    color: draftBreak === m ? '#fff' : undefined,
+                    borderColor: draftBreak === m ? 'var(--warn)' : undefined,
+                  }} onClick={() => setDraftBreak(m)}>{m}m</button>
+                ))}
+                <input
+                  type="number" min={1} max={60} value={draftBreak}
+                  onChange={e => setDraftBreak(Math.max(1, Math.min(60, +e.target.value || 1)))}
+                  style={{
+                    width: 64, height: 30, padding: '0 8px', borderRadius: 8, fontSize: 12,
+                    border: '1.5px solid var(--line-soft)', background: 'var(--surface)',
+                    color: 'var(--ink)', textAlign: 'center',
+                  }}
+                  title="Custom minutes"
+                />
+              </div>
+            </div>
+
+            {/* Apply / Cancel */}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-primary" style={{ height: 34, padding: '0 18px', fontSize: 13 }}
+                onClick={() => {
+                  set({
+                    focusDuration: draftFocus,
+                    breakDuration: draftBreak,
+                    secondsLeft: (phase === 'focus' ? draftFocus : draftBreak) * 60,
+                    running: false,
+                  });
+                  setShowSettings(false);
+                }}>
+                Apply
+              </button>
+              <button className="btn" style={{ height: 34, padding: '0 14px', fontSize: 13 }}
+                onClick={() => setShowSettings(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Subject selector — pill chips */}
         <div style={{ marginTop: 24 }}>
@@ -1472,7 +1569,7 @@ function TimerView({ state, dispatch, compact = false }) {
       {/* Stats row */}
       <div style={{ display: 'grid', gridTemplateColumns: compact ? '1fr 1fr' : 'repeat(4, 1fr)', gap: 10 }}>
         <Metric label="Sessions today" value={last7Sessions[6]} sub="completed" series={last7Sessions}/>
-        <Metric label="Focus minutes"  value={`${last7Sessions[6] * 25}m`} sub="today" series={last7Minutes}/>
+        <Metric label="Focus minutes"  value={`${last7Sessions[6] * focusDuration}m`} sub="today" series={last7Minutes}/>
         <Metric label="Stopwatch"      value={fmtTime(stopwatch)} sub="elapsed" series={[]}/>
         <Metric label="Status"         value={running ? 'Active' : 'Idle'} sub={running ? `${mode} running` : 'not running'} series={[]}/>
       </div>

@@ -161,13 +161,15 @@ function reducer(state, action) {
       // pomodoro
       if (t.secondsLeft <= 1) {
         const newPhase = t.phase === 'focus' ? 'break' : 'focus';
+        const fd = t.focusDuration || 25;
+        const bd = t.breakDuration || 5;
         return { ...state, timer: {
           ...t,
           phase: newPhase,
-          secondsLeft: (newPhase === 'focus' ? 25 : 5) * 60,
+          secondsLeft: (newPhase === 'focus' ? fd : bd) * 60,
           completedToday: t.phase === 'focus' ? t.completedToday + 1 : t.completedToday,
           // Signal that a focus session completed (cleared by apiDispatch effect)
-          sessionJustCompleted: t.phase === 'focus' ? { subject: t.subject || 'General', minutes: 25 } : null,
+          sessionJustCompleted: t.phase === 'focus' ? { subject: t.subject || 'General', minutes: fd } : null,
         }};
       }
       return { ...state, timer: { ...t, secondsLeft: t.secondsLeft - 1 } };
@@ -501,6 +503,8 @@ function App() {
       countdown: 10 * 60,
       subject: 'DSA',
       completedToday: 0,
+      focusDuration: 25,
+      breakDuration: 5,
     },
     loaded: false,
   };
