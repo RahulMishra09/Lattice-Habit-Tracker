@@ -473,6 +473,28 @@ input, textarea { font: inherit; color: inherit; }
   /* Tighten display heading sizes on mobile */
   .h-display { font-size: 26px; }
 
+  /* ── All main views: tighter padding ─────────────────── */
+  .view-main { padding: 16px 14px 100px !important; gap: 14px !important; }
+
+  /* ── Dashboard ───────────────────────────────────────── */
+  .dash-score-grid { grid-template-columns: 1fr 1fr !important; }
+
+  /* ── Habits ──────────────────────────────────────────── */
+  .habits-today-grid    { grid-template-columns: 1fr !important; }
+  .habits-suggest-grid  { grid-template-columns: 1fr !important; }
+
+  /* ── Fitness ─────────────────────────────────────────── */
+  .fitness-metrics-grid { grid-template-columns: 1fr 1fr !important; }
+  .fitness-days-grid    { grid-template-columns: 1fr 1fr !important; }
+  .fitness-weekly-grid  { grid-template-columns: 1fr 1fr !important; }
+
+  /* ── Achievements ────────────────────────────────────── */
+  .achievements-grid { grid-template-columns: 1fr 1fr !important; }
+  .achievements-xp   { min-width: 0 !important; }
+
+  /* ── Monthly ─────────────────────────────────────────── */
+  .monthly-stats-grid { grid-template-columns: 1fr 1fr !important; }
+
   /* ── Timer view ─────────────────────────────────────── */
   .timer-view  { padding: 16px 12px 100px !important; gap: 14px !important; }
   .timer-card  { padding: 24px 14px !important; }

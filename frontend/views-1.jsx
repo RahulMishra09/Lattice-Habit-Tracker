@@ -81,9 +81,9 @@ function DashboardView({ state, dispatch, compact = false }) {
   );
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 24 }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 24 }}>
       {/* greeting */}
-      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24 }}>
+      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
         <div>
           <div className="h-eyebrow" style={{ marginBottom: 6 }}>{fmtDate(today)} · Week {wk}</div>
           <h1 className={compact ? 'h-title' : 'h-display'} style={{ margin: 0 }}>
@@ -107,7 +107,7 @@ function DashboardView({ state, dispatch, compact = false }) {
       </header>
 
       {/* score row */}
-      <div style={{
+      <div className="dash-score-grid" style={{
         display: 'grid',
         gridTemplateColumns: compact ? 'repeat(2, minmax(0, 1fr))' : '1.5fr repeat(3, minmax(0, 1fr))',
         gap: 12,
@@ -413,8 +413,8 @@ function HabitsView({ state, dispatch, compact = false }) {
   const categories = ['Fitness', 'Study', 'Coding', 'Reading', 'Meditation', 'Health'];
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <div className="h-eyebrow">Habits</div>
           <h1 className={compact ? 'h-title' : 'h-display'} style={{ margin: '4px 0 0' }}>Build the foundation.</h1>
@@ -455,7 +455,7 @@ function HabitsView({ state, dispatch, compact = false }) {
       {/* Today's strip */}
       <div className="card" style={{ padding: '18px 20px' }}>
         <CardHead title="Today" hint={fmtDate(today)}/>
-        <div style={{
+        <div className="habits-today-grid" style={{
           marginTop: 14,
           display: 'grid',
           gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
@@ -530,7 +530,7 @@ function HabitsView({ state, dispatch, compact = false }) {
       {!compact && (
         <div className="card" style={{ padding: '18px 20px' }}>
           <CardHead title="Smart suggestions" hint="Based on your patterns"/>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 12 }}>
+          <div className="habits-suggest-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, marginTop: 12 }}>
             {(seed.suggestions||[]).length === 0 && <Empty title="No suggestions yet" hint="Keep tracking to get personalized tips"/>}
             {(seed.suggestions||[]).map(s => (
               <div key={s.id} style={{
@@ -584,8 +584,8 @@ function TasksView({ state, dispatch, compact = false }) {
     .filter(t => !filter || t.title.toLowerCase().includes(filter.toLowerCase()) || t.cat.toLowerCase().includes(filter.toLowerCase()));
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
-      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <div className="h-eyebrow">Tasks</div>
           <h1 className={compact ? 'h-title' : 'h-display'} style={{ margin: '4px 0 0' }}>Make today count.</h1>

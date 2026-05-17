@@ -20,7 +20,7 @@ function DSAView({ state, dispatch, compact = false }) {
   };
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 16 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 16 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
       {/* header */}
       <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
         <div>
@@ -1234,7 +1234,7 @@ function StudyView({ state, dispatch, compact = false }) {
   const chartEnd   = studyDaily.length > 0 ? studyDaily[studyDaily.length - 1].date.slice(5) : '';
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
       <header>
         <div className="h-eyebrow">Study tracker</div>
         <h1 className={compact ? 'h-title' : 'h-display'} style={{ margin: '4px 0 0' }}>Mastery, by subject.</h1>
@@ -1748,8 +1748,8 @@ function CalendarView({ state, dispatch, compact = false }) {
   };
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 16 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 18 }}>
-      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 16 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <div className="h-eyebrow">Calendar</div>
           <h1 className={compact ? 'h-title' : 'h-display'} style={{ margin: '4px 0 0' }}>Plan the month.</h1>
@@ -2068,7 +2068,7 @@ function FitnessView({ state, dispatch, compact = false }) {
   const greeting  = hr < 12 ? 'Good Morning' : hr < 17 ? 'Good Afternoon' : 'Good Evening';
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
       {/* ── Header ── */}
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
@@ -2107,7 +2107,7 @@ function FitnessView({ state, dispatch, compact = false }) {
       </header>
 
       {/* ── 4 Ring Metric Cards ── */}
-      <div style={{
+      <div className="fitness-metrics-grid" style={{
         display: 'grid',
         gridTemplateColumns: compact ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, minmax(0,1fr))',
         gap: 12,
@@ -2145,7 +2145,7 @@ function FitnessView({ state, dispatch, compact = false }) {
             <div className="muted" style={{ fontSize: 11, marginTop: 2 }}>6 training days · Sunday rest &amp; cardio</div>
           </div>
         </div>
-        <div style={{
+        <div className="fitness-days-grid" style={{
           display: 'grid',
           gridTemplateColumns: compact ? 'repeat(2, minmax(0,1fr))' : 'repeat(3, minmax(0,1fr))',
           gap: 12,
@@ -2330,7 +2330,7 @@ function FitnessView({ state, dispatch, compact = false }) {
             </div>
             <StepsBarChart data={stepsWeek} compact={compact}/>
             {!compact && (
-              <div style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+              <div className="fitness-weekly-grid" style={{ marginTop: 20, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
                 <MiniStat label="Today's Steps"  value={steps.toLocaleString()}/>
                 <MiniStat label="Distance"       value={`${distKm} km`}/>
                 <MiniStat label="Calories Burnt" value={`${calories.toLocaleString()} kcal`}/>
@@ -2699,7 +2699,7 @@ function AchievementsView({ state, dispatch, compact = false }) {
   const badges = seed.badges || [];
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 18 }}>
       <header>
         <div className="h-eyebrow">Achievements</div>
         <h1 className={compact ? 'h-title' : 'h-display'} style={{ margin: '4px 0 0' }}>Level up.</h1>
@@ -2723,7 +2723,7 @@ function AchievementsView({ state, dispatch, compact = false }) {
               <div className="num" style={{ fontSize: compact ? 24 : 34, color: 'var(--accent-on)' }}>{xp.level}</div>
             </div>
           </div>
-          <div style={{ flex: 1, minWidth: 200 }}>
+          <div className="achievements-xp" style={{ flex: 1, minWidth: 200 }}>
             <div className="h-eyebrow" style={{ marginBottom: 4 }}>Experience</div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
               <span className="num" style={{ fontSize: compact ? 22 : 30 }}>{xp.current.toLocaleString()}</span>
@@ -2741,7 +2741,7 @@ function AchievementsView({ state, dispatch, compact = false }) {
 
       <div className="card" style={{ padding: '18px 20px' }}>
         <CardHead title="Badges" hint={`${badges.filter(b=>b.unlocked).length}/${badges.length} unlocked`}/>
-        <div style={{ marginTop: 14, display: 'grid', gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 10 }}>
+        <div className="achievements-grid" style={{ marginTop: 14, display: 'grid', gridTemplateColumns: compact ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 10 }}>
           {badges.length === 0 && <Empty title="No badges yet" hint="Complete habits and challenges to earn badges"/>}
           {badges.map(b => (
             <div key={b.id} style={{
@@ -2814,8 +2814,8 @@ function MonthlyView({ state, dispatch, compact = false }) {
   const consistencyLog = useMemo2(() => buildConsistencyLog(state, seed, 'all'), [state, seed]);
 
   return (
-    <div className="fade-up" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 18 }}>
-      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between' }}>
+    <div className="fade-up view-main" style={{ padding: compact ? 20 : '28px 32px 40px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <header style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <div className="h-eyebrow">Monthly report</div>
           <h1 className={compact ? 'h-title' : 'h-display'} style={{ margin: '4px 0 0' }}>{monthLabel}.</h1>
@@ -2823,7 +2823,7 @@ function MonthlyView({ state, dispatch, compact = false }) {
         {!compact && <button className="btn"><Icon name="chart" size={12}/> Export PDF</button>}
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: compact ? '1fr 1fr' : 'repeat(5, 1fr)', gap: 10 }}>
+      <div className="monthly-stats-grid" style={{ display: 'grid', gridTemplateColumns: compact ? '1fr 1fr' : 'repeat(5, 1fr)', gap: 10 }}>
         <BigStat label="Productivity" value={m.stats.productivityScore} sub="/100"/>
         <BigStat label="Study hours" value={m.stats.studyHours} sub="hrs"/>
         <BigStat label="Problems solved" value={m.stats.problemsSolved} sub="DSA"/>
