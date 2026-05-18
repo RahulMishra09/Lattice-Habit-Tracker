@@ -168,7 +168,7 @@ function reducer(state, action) {
           phase: newPhase,
           secondsLeft: (newPhase === 'focus' ? fd : bd) * 60,
           completedToday: t.phase === 'focus' ? t.completedToday + 1 : t.completedToday,
-          // Signal that a focus session completed (cleared by apiDispatch effect)
+          startedAt: new Date().toISOString(),
           sessionJustCompleted: t.phase === 'focus' ? { subject: t.subject || 'General', minutes: fd } : null,
         }};
       }
@@ -528,6 +528,29 @@ function App() {
       .then(data => {
         // Make data available globally (views read from window.LATTICE_SEED)
         window.LATTICE_SEED = data;
+
+        // ── Restore timer with elapsed-time correction ─────────────────
+        let restoredTimer = null;
+        if (data.timerState && data.timerState.mode) {
+          const t = data.timerState;
+          restoredTimer = { ...t };
+          if (t.running && t.startedAt) {
+            const elapsed = Math.floor((Date.now() - new Date(t.startedAt).getTime()) / 1000);
+            if (t.mode === 'stopwatch') {
+              restoredTimer.stopwatch = (t.stopwatch || 0) + elapsed;
+            } else if (t.mode === 'countdown') {
+              const rem = Math.max(0, (t.countdown || 0) - elapsed);
+              restoredTimer.countdown = rem;
+              if (rem === 0) { restoredTimer.running = false; restoredTimer.startedAt = null; }
+            } else {
+              const rem = Math.max(0, (t.secondsLeft || 0) - elapsed);
+              restoredTimer.secondsLeft = rem;
+              if (rem === 0) { restoredTimer.running = false; restoredTimer.startedAt = null; }
+            }
+            if (restoredTimer.running) restoredTimer.startedAt = new Date().toISOString();
+          }
+        }
+
         dispatch({
           type: 'SEED',
           payload: {
@@ -549,6 +572,7 @@ function App() {
             gaChapters:      data.gaChapters || {},
             studyDaily:      data.studyDaily || [],
             focusSessions:   data.focusSessions || [],
+            ...(restoredTimer ? { timer: restoredTimer } : {}),
           },
         });
       })
@@ -698,6 +722,24 @@ function App() {
       fetch(`${API}/ga/${action.id}/status`, { method: 'PATCH' }).catch(console.warn);
     }
 
+    if (action.type === 'TIMER_SET') {
+      const p = action.payload;
+      const needsSync = 'running' in p || 'mode' in p || 'phase' in p ||
+                        'secondsLeft' in p || 'stopwatch' in p || 'countdown' in p ||
+                        'focusDuration' in p || 'breakDuration' in p;
+      if (needsSync) {
+        const cur = state.timer || {};
+        const merged = { ...cur, ...p };
+        if (p.running === true && !cur.running)  merged.startedAt = new Date().toISOString();
+        if (p.running === false)                  merged.startedAt = null;
+        fetch(`${API}/timer`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(merged),
+        }).catch(console.warn);
+      }
+    }
+
     if (action.type === 'LOG_FOCUS_SESSION') {
       fetch(`${API}/focus/log`, {
         method: 'POST',
@@ -723,6 +765,24 @@ function App() {
   useEffectA(() => {
     if (!state.timer?.running) return;
     const id = setInterval(() => dispatch({ type: 'TIMER_TICK' }), 1000);
+    return () => clearInterval(id);
+  }, [state.timer?.running]);
+
+  // ── Periodic timer sync to backend (every 30s while running) ─────
+  const timerRef = useRefA(state.timer);
+  useEffectA(() => { timerRef.current = state.timer; }, [state.timer]);
+  useEffectA(() => {
+    if (!state.timer?.running) return;
+    const id = setInterval(() => {
+      const t = timerRef.current;
+      if (t?.running) {
+        fetch(`${API}/timer`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(t),
+        }).catch(console.warn);
+      }
+    }, 30000);
     return () => clearInterval(id);
   }, [state.timer?.running]);
 

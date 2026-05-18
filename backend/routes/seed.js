@@ -101,6 +101,7 @@ router.get('/seed', async (req, res) => {
       gaTopics:        config.gaTopics  || [],
       gaProgress:      config.gaProgress || {},
       gaChapters:      config.gaChapters || {},
+      timerState:      config.timerState || null,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

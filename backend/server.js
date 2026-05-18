@@ -23,6 +23,7 @@ app.use('/api/events',  require('./routes/events'));
 app.use('/api/fitness',  require('./routes/fitness'));
 app.use('/api/backend',  require('./routes/backend'));
 app.use('/api/focus',    require('./routes/focus'));
+app.use('/api',          require('./routes/timer'));
 app.use('/api',          require('./routes/gate'));
 app.use('/api',          require('./routes/seed'));
 

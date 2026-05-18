@@ -82,6 +82,7 @@ const appConfigSchema = new mongoose.Schema({
   gaTopics:         mongoose.Schema.Types.Mixed,
   gaProgress:       mongoose.Schema.Types.Mixed,
   gaChapters:       mongoose.Schema.Types.Mixed,
+  timerState:       mongoose.Schema.Types.Mixed,
 }, { versionKey: false });
 
 const Habit     = mongoose.model('Habit',     habitSchema);
