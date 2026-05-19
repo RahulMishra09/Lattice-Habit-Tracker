@@ -44,7 +44,7 @@ router.patch('/exercise', async (req, res) => {
     config.markModified('fitnessProgress');
     await config.save();
 
-    res.json({ ok: true, day, completed });
+    res.json({ ok: true, day, completed, fitnessProgress: fp });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

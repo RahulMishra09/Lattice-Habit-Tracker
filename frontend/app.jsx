@@ -79,9 +79,10 @@ function reducer(state, action) {
         fitnessProgress: {
           ...(state.fitnessProgress || {}),
           completedExercises: {},
-          steps: 0,
         },
       };
+    case 'SYNC_FITNESS_PROGRESS':
+      return { ...state, fitnessProgress: action.payload };
     case 'TOGGLE_BACKEND': {
       const today = window.LATTICE_SEED?.TODAY || new Date().toISOString().slice(0, 10);
       const bp = { ...(state.backendProgress || {}) };
@@ -691,7 +692,14 @@ function App() {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ day: action.day, index: action.index }),
-      }).catch(console.warn);
+      })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data?.fitnessProgress) {
+            dispatch({ type: 'SYNC_FITNESS_PROGRESS', payload: data.fitnessProgress });
+          }
+        })
+        .catch(console.warn);
     }
 
     if (action.type === 'UPDATE_STEPS') {
